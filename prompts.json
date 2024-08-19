@@ -1,0 +1,18 @@
+[
+    {
+        "prompt": "transform_query",
+        "template": "You are a helpful assistant who transforms user search queries to improve search results for book recommendations. Enhance the following input query: Query: {query} New Query: "
+    },
+    {
+        "prompt": "generate_keywords",
+        "template": "You are a helpful assistant that generates keywords based on a list of search queries. These keywords should be semantically related to the topics of the queries. Generate at least 10 keywords related to the following questions: Queries: {queries} Keywords: "
+    },
+    {
+        "prompt": "generate_questions",
+        "template": "You are a helpful assistant that generates multiple improved search queries based on a single input query. Generate {num_queries} search queries, one on each line,  related to the following input query: Query: {query} Queries: "
+    },
+    {
+        "prompt": "generate_explanation",
+        "template": "You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise. Question: {question} Context: {context} Answer:"
+    }
+]
