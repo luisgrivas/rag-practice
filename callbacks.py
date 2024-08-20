@@ -42,7 +42,7 @@ def reset_app():
 
 def process_file(id, file_obj):
     st.toast(':blue[Processing book...]', icon='🧠')
-    split = process_pdf(file_obj, init_page=15, last_page=100, chunk_size=1024, chunk_overlap=512)
+    split = process_pdf(file_obj, init_page=15, last_page=100, chunk_size=1024, chunk_overlap=512, threshold=0.5)
     excerpts = chroma_client.get_collection('excerpts')
     ids = [f'id{id}_{i}' for i in range(len(split))]
     metadatas = [{'book_id': id} for _ in range(len(split))]

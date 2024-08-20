@@ -22,14 +22,15 @@ search_btn = st.button(
 
 if (query_results := st.session_state.get('_query_results', {})):
 # ans, finish = generate_text(topic)
-    st.subheader('')
+    st.subheader('Related Books')
+    st.caption(':lock: **not processed**  :unlock: **available**  :white_check_mark: **selected**')
     for id, book in query_results.items():
         title, active, processed, link, subjects, authors = (
                 book.get('title'), book.get('active'),
                 book.get('processed'), book.get('link'),
                 book.get('subjects'), book.get('authors')
         )
-        subjects = ' '.join(f':{colors[i % 5]}-background[_#{s}_]' for i, s in enumerate(subjects.split('; ')))
+        subjects = ' '.join(f':{colors[i % 5]}-background[{s}]' for i, s in enumerate(subjects.split('; ')))
         for key, val in widget_keys:
             key_ = key.format(id=id)
             if key_ not in st.session_state:
