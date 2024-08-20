@@ -1,10 +1,12 @@
 import streamlit as st
 from callbacks import (
     init_app, reset_app, set_ss, copy_ss, search_callback,
-    process_upload_file, extract_excerpts, search_pdf)
+    process_file, extract_excerpts, search_pdf)
 
+
+colors = ['red', 'blue', 'green', 'violet', 'orange']
 output_text = '**Authors**: {authors}\n\n**Subjects**: {subjects}'
-widget_keys = [('_check_{id}', False), ('_upload_{id}', None),]
+widget_keys = [('_check_{id}', False), ('_file_{id}', None), ('_searched_{id}', False)]
 init_data = [('_query_results', []), ('_selected_ids', {}), ('_excerpts', [])]
 
 init_app(init_data)
@@ -22,7 +24,12 @@ if (query_results := st.session_state.get('_query_results', {})):
 # ans, finish = generate_text(topic)
     st.subheader('')
     for id, book in query_results.items():
-        title, active, processed, link = book.get('title'), book.get('active'), book.get('processed'), book.get('link')
+        title, active, processed, link, subjects, authors = (
+                book.get('title'), book.get('active'),
+                book.get('processed'), book.get('link'),
+                book.get('subjects'), book.get('authors')
+        )
+        subjects = ' '.join(f':{colors[i % 5]}-background[_#{s}_]' for i, s in enumerate(subjects.split('; ')))
         for key, val in widget_keys:
             key_ = key.format(id=id)
             if key_ not in st.session_state:
@@ -39,7 +46,7 @@ if (query_results := st.session_state.get('_query_results', {})):
             emoji = ':lock:'
 
         with st.expander(label=f'**{title}** {emoji}'):
-            st.write(output_text.format(**book))
+            st.write(output_text.format(authors=authors, subjects=subjects))
             copy_ss(f'_check_{id}', f'check_{id}')
             check = st.checkbox(
                 label='Use for RAG.',
@@ -49,26 +56,26 @@ if (query_results := st.session_state.get('_query_results', {})):
             )
             if check:
                 if not processed:
-
-                    st.button(
-                        label='Process', 
-                        key=f'sbtn_{id}',
-                        on_click=search_pdf,
-                        args=(link, )
-                    )
-                    if not file:
-                        file = st.file_uploader(
-                            label='Upload the book (available at the link)',
-                            key=f'upload_{id}', on_change=copy_ss,
-                            args=(f'upload_{id}', f'_upload_{id}')
+                    if not st.session_state[f'_searched_{id}']:
+                        st.button(
+                            label='Search pdf', 
+                            key=f'sbtn_{id}',
+                            on_click=search_pdf,
+                            args=(id, link)
                         )
-                    st.button(
-                        label='Process', 
-                        disabled=(not file),
-                        key=f'pbtn_{id}',
-                        on_click=process_upload_file,
-                        args=(id, file)
-                    )
+                    else:
+                        file = st.file_uploader(
+                            label=f'Upload the book (available [here :link:]({link}))',
+                                key=f'file_{id}', on_change=copy_ss,
+                                args=(f'file_{id}', f'_file_{id}')
+                            )
+                        st.button(
+                                label='Process', 
+                                disabled=(not file),
+                                key=f'pbtn_{id}',
+                                on_click=process_file,
+                                args=(id, file)
+                        )
                 else:
                     st.session_state['_selected_ids'][id] = True
             else:
