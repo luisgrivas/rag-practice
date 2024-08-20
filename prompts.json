@@ -12,7 +12,7 @@
         "template": "You are a helpful assistant that generates multiple improved search queries based on a single input query. Generate {num_queries} search queries, one on each line,  related to the following input query: Query: {query} Queries: "
     },
     {
-        "prompt": "generate_explanation",
+        "prompt": "answer_question",
         "template": "You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise. Question: {question} Context: {context} Answer:"
     }
 ]

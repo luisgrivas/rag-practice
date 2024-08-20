@@ -3,7 +3,7 @@ import chromadb
 from scrap import download_pdf, find_pdf_links
 from reader import process_pdf
 from vectordb import search
-from llm import transform_query
+from llm import transform_query, answer_questions, generate_questions
 
 
 chroma_client = chromadb.PersistentClient('data')
@@ -67,7 +67,7 @@ def extract_excerpts(query: str, ids: list):
         filters={'book_id': {'$in': ids}},
         collection_name='excerpts'
     )
-    st.session_state['_excerpts'] = excerpts
+    return excerpts
 
 
 def search_pdf(id: int, url: str):
@@ -85,3 +85,13 @@ def search_pdf(id: int, url: str):
             st.toast(':red[The book could not be automatically downloaded]', icon='🚫')
     else:
         st.toast(':red[The book could not be automatically downloaded]', icon='🚫')
+
+
+def generate_answer(query: str, ids: list):
+    st.toast(':blue[Extracting text...]', icon='🧠')
+    questions = generate_questions(query)
+    excerpts = extract_excerpts(questions, ids)
+    excerpts = '\n\n'.join(f'Excerpt {i + 1}:\n{e}' for i, e in enumerate(excerpts))
+    st.toast(':blue[Generating answer...]', icon='🧠')
+    answer = answer_questions(questions, excerpts)
+    st.session_state['_answer'] = answer

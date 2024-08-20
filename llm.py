@@ -33,3 +33,15 @@ def transform_query(input_query: str):
     keywords_prompt = prompts.get('generate_keywords', '')
     keywords, _ = generate_text(keywords_prompt.format(queries=transformed_query))
     return transformed_query, keywords
+
+
+def generate_questions(input_query: str) -> str:
+    questions_prompt = prompts.get('generate_questions', '')
+    questions, _ = generate_text(questions_prompt.format(num_queries=3, query=input_query))
+    return questions
+
+
+def answer_questions(questions: str, context: str) -> str:
+    answer_prompt = prompts.get('answer_question', '')
+    answer, _ =  generate_text(answer_prompt.format(question=questions, context=context))
+    return answer

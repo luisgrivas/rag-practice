@@ -53,7 +53,7 @@ def process_books(books: list[dict]) -> list[dict]:
             i += 1
     return arr
 
-def search(query: str, filters: dict | None = None, n_results: int = 10, collection_name: str = 'books') -> list:
+def search(query: str, filters: dict | None = None, n_results: int = 20, collection_name: str = 'books') -> list:
     collection = chroma_client.get_collection(name=collection_name)
     input = {'query_texts': query, 'n_results': n_results, 'where': {'active': True}}
     if filters:
